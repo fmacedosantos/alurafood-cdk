@@ -16,6 +16,7 @@ public class AluraVpcStack extends Stack {
         super(scope, id, props);
 
         vpc = Vpc.Builder.create(this, "AluraVpc")
+                .vpcName("alura-vpc")
                 .maxAzs(3)
                 .build();
     }
