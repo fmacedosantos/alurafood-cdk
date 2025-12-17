@@ -19,7 +19,7 @@ public class AluraServiceStack extends Stack {
         ApplicationLoadBalancedFargateService.Builder.create(this, "AluraService")
                 .serviceName("alura-service-ola")
                 .cluster(cluster)
-                .cpu(256)
+                .cpu(512)
                 .desiredCount(1)
                 .listenerPort(8080)
                 .assignPublicIp(true)
@@ -29,7 +29,7 @@ public class AluraServiceStack extends Stack {
                                 .containerPort(80)
                                 .containerName("app_ola")
                                 .build())
-                .memoryLimitMiB(512)
+                .memoryLimitMiB(1024)
                 .publicLoadBalancer(true)
                 .build();
     }

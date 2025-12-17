@@ -39,7 +39,7 @@ public class AluraRdsStack extends Stack {
                 .allocatedStorage(10)
                 .securityGroups(Collections.singletonList(iSecurityGroup))
                 .vpcSubnets(SubnetSelection.builder()
-                        .subnets(vpc.getPublicSubnets())
+                        .subnets(vpc.getPrivateSubnets())
                         .build())
                 .build();
 

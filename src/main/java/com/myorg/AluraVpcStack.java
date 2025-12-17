@@ -18,7 +18,6 @@ public class AluraVpcStack extends Stack {
         vpc = Vpc.Builder.create(this, "AluraVpc")
                 .vpcName("alura-vpc")
                 .maxAzs(2)
-                .natGateways(0)
                 .build();
     }
 
