@@ -25,7 +25,7 @@ public class AluraRdsStack extends Stack {
         iSecurityGroup.addIngressRule(Peer.anyIpv4(), Port.tcp(3306));
 
         DatabaseInstance databaseInstance = DatabaseInstance.Builder.create(this, "rds-pedidos")
-                .instanceIdentifier("alura-db-pedidos")
+                .instanceIdentifier("alurafood-db-pedidos")
                 .engine(DatabaseInstanceEngine.mysql(MySqlInstanceEngineProps.builder()
                         .version(MysqlEngineVersion.VER_8_0)
                         .build()))
@@ -46,6 +46,10 @@ public class AluraRdsStack extends Stack {
         CfnOutput.Builder.create(this, "pedidos-db-endpoint")
                 .exportName("pedidos-db-endpoint")
                 .value(databaseInstance.getDbInstanceEndpointAddress())
+                .build();
+        CfnOutput.Builder.create(this, "pedidos-db-senha")
+                .exportName("pedidos-db-senha")
+                .value(senha.getValueAsString())
                 .build();
     }
 }
