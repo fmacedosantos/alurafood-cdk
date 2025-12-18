@@ -1,13 +1,8 @@
 package com.myorg;
 
-import software.amazon.awscdk.Fn;
-import software.amazon.awscdk.RemovalPolicy;
-import software.amazon.awscdk.Stack;
-import software.amazon.awscdk.StackProps;
-import software.amazon.awscdk.services.ecs.AwsLogDriverProps;
-import software.amazon.awscdk.services.ecs.Cluster;
-import software.amazon.awscdk.services.ecs.ContainerImage;
-import software.amazon.awscdk.services.ecs.LogDriver;
+import software.amazon.awscdk.*;
+import software.amazon.awscdk.services.applicationautoscaling.EnableScalingProps;
+import software.amazon.awscdk.services.ecs.*;
 import software.amazon.awscdk.services.ecs.patterns.ApplicationLoadBalancedFargateService;
 import software.amazon.awscdk.services.ecs.patterns.ApplicationLoadBalancedTaskImageOptions;
 import software.amazon.awscdk.services.logs.LogGroup;
@@ -31,7 +26,7 @@ public class AluraServiceStack extends Stack {
         autenticacao.put("SPRING_DATASOURCE_USERNAME", "admin");
         autenticacao.put("SPRING_DATASOURCE_PASSWORD", Fn.importValue("pedidos-db-senha"));
 
-        ApplicationLoadBalancedFargateService.Builder.create(this, "AluraService")
+        ApplicationLoadBalancedFargateService aluraService = ApplicationLoadBalancedFargateService.Builder.create(this, "AluraService")
                 .serviceName("alura-service-ola")
                 .cluster(cluster)
                 .cpu(512)
@@ -55,5 +50,20 @@ public class AluraServiceStack extends Stack {
                 .memoryLimitMiB(1024)
                 .publicLoadBalancer(true)
                 .build();
+
+        ScalableTaskCount scalableTarget = aluraService.getService().autoScaleTaskCount(EnableScalingProps.builder()
+                .minCapacity(1)
+                .maxCapacity(3)
+                .build());
+        scalableTarget.scaleOnCpuUtilization("CpuScaling", CpuUtilizationScalingProps.builder()
+                .targetUtilizationPercent(70)
+                .scaleInCooldown(Duration.minutes(3))
+                .scaleOutCooldown(Duration.minutes(2))
+                .build());
+        scalableTarget.scaleOnMemoryUtilization("MemoryScaling", MemoryUtilizationScalingProps.builder()
+                .targetUtilizationPercent(65)
+                .scaleInCooldown(Duration.minutes(3))
+                .scaleOutCooldown(Duration.minutes(2))
+                .build());
     }
 }
